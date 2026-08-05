@@ -27,11 +27,11 @@ jobs:
 
       - name: Pull latest code
         run: |
-          cd openBMC
+          cd OpenBMC
           git pull origin sp7
           git log --oneline -5
 
       - name: Check APML tag
         run: |
-          cd openBMC
+          cd OpenBMC
           git tag | grep apml-5.1.1
