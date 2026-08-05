@@ -1,0 +1,61 @@
+name: Scheduled Pull AMD Repos
+
+on:
+  schedule:
+    - cron: "0 18 * * *"   # UTC 18:00 = 台灣每天 02:00
+  workflow_dispatch:
+
+jobs:
+  pull-repos:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.AMD_REPO_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+      - name: Test GitHub SSH
+        run: |
+          ssh -T git@github.com || true
+
+      - name: Clone and pull AMD repos
+        run: |
+          set -e
+
+          repos=(
+            "git@github.com:AMDESE/bmc-ppr.git"
+            "git@github.com:AMDESE/YAAP.git"
+            "git@github.com:AMDESE/amd-iodevices-inventory.git"
+            "git@github.com:AMDESE/bmc-retimer-update.git"
+            "git@github.com:AMDESE/bmc-mdc-sdutool.git"
+            "git@github.com:AMDESE/amd-health-mgr.git"
+          )
+
+          for repo in "${repos[@]}"; do
+            name=$(basename "$repo" .git)
+
+            echo "======================================"
+            echo "Cloning $name"
+            echo "======================================"
+
+            git clone "$repo" "$name"
+
+            cd "$name"
+
+            echo "Remote:"
+            git remote -v
+
+            echo "Current branch:"
+            git branch --show-current
+
+            echo "Pull latest:"
+            git pull
+
+            echo "Latest commits:"
+            git log --oneline -5
+
+            cd ..
+          done
