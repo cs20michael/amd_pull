@@ -1,0 +1,37 @@
+name: Pull AMD APML repo
+
+on:
+  schedule:
+    - cron: "0 18 * * *"   # UTC 18:00 = 台灣 02:00
+  workflow_dispatch:
+
+jobs:
+  pull-apml:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.AMD_REPO_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+      - name: Test GitHub SSH
+        run: |
+          ssh -T git@github.com || true
+
+      - name: Clone AMD APML repo
+        run: |
+          git clone --branch sp7-dev ssh://git@github.com/amd/apml_library.git apml_library
+
+      - name: Pull latest code
+        run: |
+          cd apml_library
+          git pull origin sp7-dev
+          git log --oneline -5
+
+      - name: Check APML tag
+        run: |
+          cd apml_library
+          git tag | grep apml-5.1.1
