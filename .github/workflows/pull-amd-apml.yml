@@ -1,4 +1,4 @@
-name: Pull AMD APML repo
+name: Pull AMD openBMC repo
 
 on:
   schedule:
@@ -23,15 +23,15 @@ jobs:
 
       - name: Clone AMD APML repo
         run: |
-          git clone --branch sp7-dev ssh://git@github.com/amd/apml_library.git apml_library
+          git clone --branch test ssh://git@github.com:AMDESE/OpenBMC_nda.git openBMC
 
       - name: Pull latest code
         run: |
-          cd apml_library
-          git pull origin sp7-dev
+          cd openBMC
+          git pull origin test
           git log --oneline -5
 
       - name: Check APML tag
         run: |
-          cd apml_library
+          cd openBMC
           git tag | grep apml-5.1.1
