@@ -23,12 +23,12 @@ jobs:
 
       - name: Clone AMD APML repo
         run: |
-          git clone --branch test ssh://git@github.com:AMDESE/OpenBMC_nda.git openBMC
+          git clone --branch sp7 git@github.com:AMDESE/OpenBMC_nda.git OpenBMC
 
       - name: Pull latest code
         run: |
           cd openBMC
-          git pull origin test
+          git pull origin sp7
           git log --oneline -5
 
       - name: Check APML tag
