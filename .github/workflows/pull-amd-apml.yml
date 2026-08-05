@@ -1,4 +1,4 @@
-name: Pull AMD openBMC repo
+name: Pull AMD OpenBMC repo
 
 on:
   schedule:
